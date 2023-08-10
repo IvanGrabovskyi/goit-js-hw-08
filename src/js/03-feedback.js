@@ -4,7 +4,7 @@ const emailInput = document.querySelector('input[name="email"]');
 const messageInput = document.querySelector('textarea[name="message"]');
 
 const saveFormState = () => {
-  constformState = {
+  const formState = {
     email: emailInput.value,
     message: messageInput.value,
   };

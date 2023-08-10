@@ -27,30 +27,7 @@ alt="${description}"
 
 gallery.insertAdjacentHTML('afterbegin', galleryList);
 
-gallery.onclick = evt => {
-  if (evt.target.tagName !== 'IMG') {
-    return;
-  }
-  evt.preventDefault();
-  const instance = basicLightbox.create(
-    `
-		<img width="1400" height="900" src="${evt.target.dataset.source}">
-	`,
-    {
-      onShow: () => {
-        document.addEventListener('keydown', closeModal);
-      },
-      onClose: () => {
-        document.removeEventListener('keydown', closeModal);
-      },
-    }
-  );
-  instance.show();
-
-  function closeModal(evt) {
-    if (evt.code !== 'Escape') {
-      return;
-    }
-    instance.close();
-  }
-};
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
