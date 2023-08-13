@@ -1,39 +1,43 @@
 import throttle from 'lodash.throttle';
+
 const form = document.querySelector('.feedback-form');
-const emailInput = document.querySelector('input[name="email"]');
-const messageInput = document.querySelector('textarea[name="message"]');
+const { email, message } = form.elements;
 
-const saveFormState = () => {
-  const formState = {
-    email: emailInput.value,
-    message: messageInput.value,
+form.addEventListener('input', throttle(inStorage, 500));
+const localData = localStorage.getItem('feedback-form-state');
+
+reloadPage();
+form.addEventListener('submit', onSubmit);
+
+function inStorage() {
+  const data = {
+    email: email.value,
+    message: message.value,
   };
+  localStorage.setItem('feedback-form-state', JSON.stringify(data));
+}
 
-  localStorage.setItem('feedback-form-state', JSON.stringify(formState));
-};
-
-emailInput.addEventListener('input', throttle(saveFormState, 500));
-messageInput.addEventListener('input', throttle(saveFormState, 500));
-window.addEventListener('DOMContentLoaded', () => {
-  const saveFormState = localStorage.getItem('feedback-fotm-state');
-
-  if (saveFormState) {
-    const formState = JSON.parse(saveFormState);
-
-    emailInput.value = formState.email;
-    messageInput.value = formState.message;
+function onSubmit(evt) {
+  evt.preventDefault();
+  if ((email.value.length && message.value.length) < 1) {
+    alert('Please fill in all input fields');
+  } else {
+    const data = {
+      email: email.value,
+      message: message.value,
+    };
+    console.log(data);
+    evt.currentTarget.reset();
+    localStorage.removeItem('feedback-form-state');
   }
-});
+}
 
-form.addEventListener('submit', event => {
-  event.preventDefault();
-  const formState = {
-    email: emailInput.value,
-    message: messageInput.value,
-  };
-  console.log(formState);
-
-  localStorage.removeItem('feedback-form-state');
-  emailInput.value = '';
-  messageInput.value = '';
-});
+function reloadPage() {
+  if (localData) {
+    email.value = JSON.parse(localData).email;
+    message.value = JSON.parse(localData).message;
+  } else {
+    email.value = '';
+    message.value = '';
+  }
+}
